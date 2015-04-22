@@ -24,16 +24,25 @@ public class FServer {
 
 	private static NioSocketAcceptor acceptor = new NioSocketAcceptor();
 	private static Logger logger = Logger.getLogger(FServer.class);
-
-	public static void main(String[] args) throws IOException {
+	
+	public static void startServer(int bufferSize,int port,int idleTime){
 		acceptor.getFilterChain().addLast("logger", new LoggingFilter());
 		acceptor.getFilterChain().addLast("codec",
 				new ProtocolCodecFilter(bofulCodec));
 		acceptor.setHandler(serverHandler);
 
-		acceptor.getSessionConfig().setReadBufferSize(2048);
-		acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
-		acceptor.bind(new InetSocketAddress(8888));
+		acceptor.getSessionConfig().setReadBufferSize(bufferSize);
+		acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, idleTime);
+		try {
+			acceptor.bind(new InetSocketAddress(port));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		logger.debug("starting...........");
+	}
+	
+	public static void main(String[] args) throws IOException {
+		startServer(2014,8888,10);
 	}
 }
