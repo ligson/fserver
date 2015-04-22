@@ -96,12 +96,14 @@ public class ClientMain {
 			byte[] buffer = new byte[bufferSize];
 			int len = -1;
 			long offset = 0;
+			String fileHash = FileUtils.getHexHash(file);
 			while ((len = inputStream.read(buffer)) > 0) {
 				TransferProtocol transferProtocol = new TransferProtocol();
 				transferProtocol.setSrcFile(file);
 				transferProtocol.setDestFile(new File(destFile));
 				transferProtocol.setFileSize(file.length());
 				transferProtocol.setLen(len);
+				transferProtocol.setHash(fileHash);
 				transferProtocol.setOffset(offset);
 				transferProtocol.setBuffer(buffer);
 				ioSession.write(transferProtocol);
@@ -112,6 +114,10 @@ public class ClientMain {
 		} else {
 			throw new Exception("未连接上");
 		}
+
+	}
+
+	public void download(File serverFile, File nativeFile) throws Exception {
 
 	}
 
