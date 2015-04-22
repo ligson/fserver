@@ -5,6 +5,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 
+import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.TransferProtocol;
 
@@ -28,6 +29,16 @@ public class BofulDecoder extends CumulativeProtocolDecoder {
 					return false;
 				} else {
 					out.write(transferProtocol);
+					return true;
+				}
+			}
+			if(operation==Operation.TAG_DOWNLOAD){
+				DownloadProtocol downloadProtocol=DownloadProtocol.parse(inBuffer);
+				if(downloadProtocol==null){
+					inBuffer.reset();
+					return false;
+				}else{
+					out.write(downloadProtocol);
 					return true;
 				}
 			}

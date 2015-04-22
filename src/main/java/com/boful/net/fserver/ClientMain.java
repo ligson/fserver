@@ -15,6 +15,7 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import com.boful.common.file.utils.FileUtils;
 import com.boful.net.fserver.codec.BofulCodec;
+import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.TransferProtocol;
 
 import org.apache.log4j.Logger;
@@ -117,13 +118,19 @@ public class ClientMain {
 	}
 
 	public void download(File serverFile, File nativeFile) throws Exception {
-		
+		IoSession ioSession = cf.getSession();
+		if (ioSession != null) {
+			DownloadProtocol downloadProtocol=new DownloadProtocol();
+			downloadProtocol.setSrc(serverFile);
+			downloadProtocol.setDest(nativeFile);
+			ioSession.write(downloadProtocol);
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
 		ClientMain clientMain = new ClientMain();
 		clientMain.connect("127.0.0.1", 8888);
-		clientMain.send(new File("D:/ue_chinese.exe"), "E:/222.exe");
+		clientMain.send(new File("D:/安装和使用说明.docx"), "E:/安装和使用说明.docx");
 	}
 
 }
