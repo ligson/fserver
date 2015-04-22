@@ -8,7 +8,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.mina.core.buffer.IoBuffer;
 
-public class SendState {
+public class SendStateProtocol {
 	public static final int OPERATION = Operation.TAG_SEND_STATE;
 	private int state = Operation.TAG_STATE_SEND_OK;
 	private File srcFile;
@@ -55,7 +55,7 @@ public class SendState {
 	public IoBuffer toByteArray() throws IOException {
 		String srcPath = srcFile.getAbsolutePath();
 		String destPath = destFile.getAbsolutePath();
-		
+
 		IoBuffer ioBuffer = IoBuffer.allocate(countLength());
 		ioBuffer.putInt(OPERATION);
 		ioBuffer.putInt(state);
@@ -74,41 +74,35 @@ public class SendState {
 	}
 
 	// 解码
-	public static TransferProtocol parse(IoBuffer ioBuffer) throws IOException {
+	public static SendStateProtocol parse(IoBuffer ioBuffer) throws IOException {
 		if (ioBuffer.remaining() < 32) {
 			return null;
 		}
-		TransferProtocol transferProtocol = new TransferProtocol();
-		int srcPathLen = ioBuffer.getInt();
-		int destPathLen = ioBuffer.getInt();
-		long fileLength = ioBuffer.getLong();
-		transferProtocol.setFileSize(fileLength);
-		transferProtocol.setOffset(ioBuffer.getLong());
-		transferProtocol.setLen(ioBuffer.getInt());
-		// read hash
-		if (ioBuffer.remaining() < 16) {
-			return null;
-		}
+
+		int state = ioBuffer.getInt();
+		int srcLen = ioBuffer.getInt();
+		int destLen = ioBuffer.getInt();
 		byte[] hashBuffer = new byte[16];
 		ioBuffer.get(hashBuffer);
-		transferProtocol.setHash(Hex.encodeHexString(hashBuffer));
+		String hash = Hex.encodeHexString(hashBuffer).toUpperCase();
 
-		int remainLen = srcPathLen + destPathLen + transferProtocol.getLen();
-		int remain = ioBuffer.remaining();
-		if (remain < remainLen) {
+		if (ioBuffer.remaining() < (srcLen + destLen)) {
 			return null;
 		}
-		byte[] srcBuffer = new byte[srcPathLen];
-		byte[] destBuffer = new byte[destPathLen];
-		byte[] buffer = new byte[transferProtocol.getLen()];
-		ioBuffer.get(srcBuffer);
-		ioBuffer.get(destBuffer);
-		ioBuffer.get(buffer);
+		byte[] srcPathBuffer = new byte[srcLen];
+		byte[] destPathBuffer = new byte[destLen];
+		ioBuffer.get(srcPathBuffer);
+		ioBuffer.get(destPathBuffer);
+		String srcPath = new String(srcPathBuffer, "UTF-8");
+		String destPath = new String(destPathBuffer, "UTF-8");
 
-		transferProtocol.setSrcFile(new File(new String(srcBuffer, "UTF-8")));
-		transferProtocol.setDestFile(new File(new String(destBuffer, "UTF-8")));
-		transferProtocol.setBuffer(buffer);
-		return transferProtocol;
+		SendStateProtocol sendStateProtocol = new SendStateProtocol();
+		sendStateProtocol.setDestFile(new File(destPath));
+		sendStateProtocol.setSrcFile(new File(srcPath));
+		sendStateProtocol.setHash(hash);
+		sendStateProtocol.setState(state);
+
+		return sendStateProtocol;
 	}
 
 	public int countLength() {
