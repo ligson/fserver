@@ -6,7 +6,7 @@ import com.boful.common.file.utils.FileUtils;
 
 public class Test {
 	public static void main(String[] args) {
-		File file = new File("d:/ue_chinese.exe");
+		File file = new File("d:/transcode.zip");
 		byte[] hash = FileUtils.getHash(file);
 		System.out.println(hash.length);
 	}

@@ -117,7 +117,7 @@ public class ClientMain {
 	}
 
 	public void download(File serverFile, File nativeFile) throws Exception {
-
+		
 	}
 
 	public static void main(String[] args) throws Exception {

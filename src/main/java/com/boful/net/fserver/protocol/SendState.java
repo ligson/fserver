@@ -55,9 +55,21 @@ public class SendState {
 	public IoBuffer toByteArray() throws IOException {
 		String srcPath = srcFile.getAbsolutePath();
 		String destPath = destFile.getAbsolutePath();
-
-		IoBuffer ioBuffer = IoBuffer.allocate(countLength());
 		
+		IoBuffer ioBuffer = IoBuffer.allocate(countLength());
+		ioBuffer.putInt(OPERATION);
+		ioBuffer.putInt(state);
+		ioBuffer.putInt(srcPath.getBytes("UTF-8").length);
+		ioBuffer.putInt(destPath.getBytes("UTF-8").length);
+		byte[] hashBuffer;
+		try {
+			hashBuffer = Hex.decodeHex(getHash().toCharArray());
+		} catch (DecoderException e) {
+			throw new IOException(e.getMessage());
+		}
+		ioBuffer.put(hashBuffer);
+		ioBuffer.put(srcPath.getBytes("UTF-8"));
+		ioBuffer.put(destPath.getBytes("UTF-8"));
 		return ioBuffer;
 	}
 
