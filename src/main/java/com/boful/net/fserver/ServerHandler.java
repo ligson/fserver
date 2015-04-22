@@ -23,6 +23,7 @@ public class ServerHandler extends IoHandlerAdapter {
 	public void sessionCreated(IoSession session) throws Exception {
 		super.sessionCreated(session);
 		sessions.add(session);
+		System.out.println("connect.................");
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class ServerHandler extends IoHandlerAdapter {
 	public void exceptionCaught(IoSession session, Throwable cause)
 			throws Exception {
 		// TODO Auto-generated method stub
-		super.exceptionCaught(session, cause);
+		cause.printStackTrace();
 	}
 
 	@Override
@@ -60,6 +61,7 @@ public class ServerHandler extends IoHandlerAdapter {
 
 	private void doReceive(IoSession session, TransferProtocol transferProtocol) {
 		File dest = transferProtocol.getDestFile();
+		System.out.println(dest.getAbsolutePath());
 		try {
 			if (!dest.exists()) {
 				dest.getParentFile().mkdirs();
@@ -67,7 +69,7 @@ public class ServerHandler extends IoHandlerAdapter {
 			}
 			RandomAccessFile randomAccessFile = new RandomAccessFile(dest, "rw");
 			randomAccessFile.seek(transferProtocol.getOffset());
-			randomAccessFile.write(transferProtocol.getBuffer());
+			randomAccessFile.write(transferProtocol.getBuffer(),0,transferProtocol.getLen());
 			randomAccessFile.close();
 			if (dest.length()==transferProtocol.getFileSize()) {
 				System.out.println("ok......................");

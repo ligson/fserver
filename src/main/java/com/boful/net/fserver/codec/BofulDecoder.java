@@ -13,9 +13,11 @@ public class BofulDecoder extends CumulativeProtocolDecoder {
 	@Override
 	protected boolean doDecode(IoSession session, IoBuffer inBuffer,
 			ProtocolDecoderOutput out) throws Exception {
+		System.out.println("decccccccccccccccccccccc");
 		if (inBuffer.remaining() > 0) {
 			inBuffer.mark();
 			if (inBuffer.remaining() < 4) {
+				inBuffer.reset();
 				return false;
 			}
 			int operation = inBuffer.getInt();
@@ -23,12 +25,15 @@ public class BofulDecoder extends CumulativeProtocolDecoder {
 				TransferProtocol transferProtocol = TransferProtocol
 						.parse(inBuffer);
 				if (transferProtocol == null) {
+					inBuffer.reset();
 					return false;
 				} else {
 					out.write(transferProtocol);
+					return true;
 				}
 			}
 		}
+		inBuffer.reset();
 		return false;
 	}
 

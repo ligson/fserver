@@ -82,7 +82,7 @@ public class TransferProtocol {
 	}
 
 	public static TransferProtocol parse(IoBuffer ioBuffer) throws IOException {
-		if (ioBuffer.remaining() < 36) {
+		if (ioBuffer.remaining() < 32) {
 			return null;
 		}
 		TransferProtocol transferProtocol = new TransferProtocol();
@@ -94,7 +94,10 @@ public class TransferProtocol {
 		transferProtocol.setLen(ioBuffer.getInt());
 
 		int remainLen = srcPathLen + destPathLen + transferProtocol.getLen();
-		if (ioBuffer.remaining() < remainLen) {
+		System.out.println(remainLen + ">>>>>>>>>>>>>>>>>>>>");
+		int remain = ioBuffer.remaining();
+		System.out.println(remain);
+		if (remain < remainLen) {
 			return null;
 		}
 		byte[] srcBuffer = new byte[srcPathLen];
