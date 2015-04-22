@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
+import org.mortbay.log.Log;
 
 import com.boful.common.file.utils.FileUtils;
 import com.boful.net.fserver.protocol.Operation;
@@ -63,7 +64,9 @@ public class ServerHandler extends IoHandlerAdapter {
 		File dest = transferProtocol.getDestFile();
 		double process = transferProtocol.getOffset() * 1.00
 				/ transferProtocol.getFileSize();
-		System.out.println("接收进度!" + process);
+		logger.debug("src:" + transferProtocol.getSrcFile().getAbsolutePath()
+				+ "-dest:" + transferProtocol.getDestFile().getAbsolutePath()
+				+ "-接收进度:" + process * 100 + "%");
 		try {
 			if (!dest.exists()) {
 				dest.getParentFile().mkdirs();
@@ -86,7 +89,10 @@ public class ServerHandler extends IoHandlerAdapter {
 			if (dest.length() == transferProtocol.getFileSize()) {
 				String fileHash = FileUtils.getHexHash(dest);
 				String srcHash = transferProtocol.getHash();
-				System.out.println("传输完成......................hash 是否一致："
+				logger.info("src:"
+						+ transferProtocol.getSrcFile().getAbsolutePath()
+						+ "-dest:" + dest.getAbsolutePath()
+						+ " 传输完成......................hash 是否一致："
 						+ fileHash.equals(srcHash));
 				randomAccessFile.close();
 				session.removeAttribute(writerKey);

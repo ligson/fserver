@@ -94,7 +94,6 @@ public class TransferProtocol {
 		} catch (DecoderException e) {
 			throw new IOException(e.getMessage());
 		}
-		System.out.println(hashBuffer.length);
 		ioBuffer.put(hashBuffer);
 		ioBuffer.put(srcPath.getBytes("UTF-8"));
 		ioBuffer.put(destPath.getBytes("UTF-8"));
