@@ -13,7 +13,6 @@ public class BofulDecoder extends CumulativeProtocolDecoder {
 	@Override
 	protected boolean doDecode(IoSession session, IoBuffer inBuffer,
 			ProtocolDecoderOutput out) throws Exception {
-		System.out.println("decccccccccccccccccccccc");
 		if (inBuffer.remaining() > 0) {
 			inBuffer.mark();
 			if (inBuffer.remaining() < 4) {

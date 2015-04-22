@@ -104,7 +104,7 @@ public class TransferProtocol {
 
 	// 解码
 	public static TransferProtocol parse(IoBuffer ioBuffer) throws IOException {
-		if (ioBuffer.remaining() < 32) {
+		if (ioBuffer.remaining() < 48) {
 			return null;
 		}
 		TransferProtocol transferProtocol = new TransferProtocol();
@@ -115,17 +115,12 @@ public class TransferProtocol {
 		transferProtocol.setOffset(ioBuffer.getLong());
 		transferProtocol.setLen(ioBuffer.getInt());
 		// read hash
-		if (ioBuffer.remaining() < 16) {
-			return null;
-		}
 		byte[] hashBuffer = new byte[16];
 		ioBuffer.get(hashBuffer);
-		transferProtocol.setHash(Hex.encodeHexString(hashBuffer));
+		transferProtocol.setHash(Hex.encodeHexString(hashBuffer).toUpperCase());
 
 		int remainLen = srcPathLen + destPathLen + transferProtocol.getLen();
-		System.out.println(remainLen + ">>>>>>>>>>>>>>>>>>>>");
 		int remain = ioBuffer.remaining();
-		System.out.println(remain);
 		if (remain < remainLen) {
 			return null;
 		}

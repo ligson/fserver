@@ -17,7 +17,6 @@ public class BofulEncoder extends ProtocolEncoderAdapter {
 			method = message.getClass().getMethod("toByteArray");
 		} catch (Exception e) {
 		}
-		System.out.println(method);
 		if (method != null) {
 			Object object = method.invoke(message);
 			if (object instanceof IoBuffer) {

@@ -82,9 +82,7 @@ public class SendState {
 		transferProtocol.setHash(Hex.encodeHexString(hashBuffer));
 
 		int remainLen = srcPathLen + destPathLen + transferProtocol.getLen();
-		System.out.println(remainLen + ">>>>>>>>>>>>>>>>>>>>");
 		int remain = ioBuffer.remaining();
-		System.out.println(remain);
 		if (remain < remainLen) {
 			return null;
 		}

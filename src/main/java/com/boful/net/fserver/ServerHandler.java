@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
+import com.boful.common.file.utils.FileUtils;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.TransferProtocol;
 
@@ -43,7 +44,6 @@ public class ServerHandler extends IoHandlerAdapter {
 	public void messageReceived(IoSession session, Object message)
 			throws Exception {
 		super.messageReceived(session, message);
-		System.out.println("receive..............................");
 		Field field = null;
 		try {
 			field = message.getClass().getDeclaredField("OPERATION");
@@ -61,18 +61,35 @@ public class ServerHandler extends IoHandlerAdapter {
 
 	private void doReceive(IoSession session, TransferProtocol transferProtocol) {
 		File dest = transferProtocol.getDestFile();
-		System.out.println(dest.getAbsolutePath());
+		double process = transferProtocol.getOffset() * 1.00
+				/ transferProtocol.getFileSize();
+		System.out.println("接收进度!" + process);
 		try {
 			if (!dest.exists()) {
 				dest.getParentFile().mkdirs();
 				dest.createNewFile();
 			}
-			RandomAccessFile randomAccessFile = new RandomAccessFile(dest, "rw");
+			String writerKey = dest.getAbsolutePath() + "_writer";
+			Object object = session.getAttribute(writerKey);
+			RandomAccessFile randomAccessFile = null;
+			if (object != null) {
+				randomAccessFile = (RandomAccessFile) object;
+			} else {
+				randomAccessFile = new RandomAccessFile(dest, "rw");
+				session.setAttribute(writerKey, randomAccessFile);
+			}
+
 			randomAccessFile.seek(transferProtocol.getOffset());
-			randomAccessFile.write(transferProtocol.getBuffer(),0,transferProtocol.getLen());
-			randomAccessFile.close();
-			if (dest.length()==transferProtocol.getFileSize()) {
-				System.out.println("ok......................");
+			randomAccessFile.write(transferProtocol.getBuffer(), 0,
+					transferProtocol.getLen());
+
+			if (dest.length() == transferProtocol.getFileSize()) {
+				String fileHash = FileUtils.getHexHash(dest);
+				String srcHash = transferProtocol.getHash();
+				System.out.println("传输完成......................hash 是否一致："
+						+ fileHash.equals(srcHash));
+				randomAccessFile.close();
+				session.removeAttribute(writerKey);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

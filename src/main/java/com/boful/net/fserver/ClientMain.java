@@ -109,7 +109,6 @@ public class ClientMain {
 				ioSession.write(transferProtocol);
 				offset += bufferSize;
 			}
-			System.out.println("okkkkkkkkkkkkkkkkk==");
 			inputStream.close();
 		} else {
 			throw new Exception("未连接上");
