@@ -79,8 +79,9 @@ public class TransferProtocol {
 	public IoBuffer toByteArray() throws IOException {
 		String srcPath = srcFile.getAbsolutePath();
 		String destPath = destFile.getAbsolutePath();
+		int count = countLength();
 
-		IoBuffer ioBuffer = IoBuffer.allocate(countLength());
+		IoBuffer ioBuffer = IoBuffer.allocate(count);
 		ioBuffer.putInt(OPERATION);
 		ioBuffer.putInt(srcPath.getBytes("UTF-8").length);
 		ioBuffer.putInt(destPath.getBytes("UTF-8").length);
@@ -93,6 +94,7 @@ public class TransferProtocol {
 		} catch (DecoderException e) {
 			throw new IOException(e.getMessage());
 		}
+		System.out.println(hashBuffer.length);
 		ioBuffer.put(hashBuffer);
 		ioBuffer.put(srcPath.getBytes("UTF-8"));
 		ioBuffer.put(destPath.getBytes("UTF-8"));
@@ -148,7 +150,7 @@ public class TransferProtocol {
 		try {
 			return 4 + 4 * 2 + 8 * 2 + 4 + 16
 					+ srcPath.getBytes("UTF-8").length
-					+ destPath.getBytes("UTF-8").length;
+					+ destPath.getBytes("UTF-8").length + buffer.length;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

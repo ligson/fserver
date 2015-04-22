@@ -34,4 +34,12 @@ public class ClientHandler extends IoHandlerAdapter {
 		super.messageSent(session, message);
 	}
 
+	@Override
+	public void exceptionCaught(IoSession session, Throwable cause)
+			throws Exception {
+		cause.printStackTrace();
+	}
+	
+	
+
 }
