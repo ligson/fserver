@@ -96,6 +96,12 @@
 			<version>${bofulCommon.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.boful</groupId>
+			<artifactId>bofulnetprotocol</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId> org.apache.cassandra</groupId>
