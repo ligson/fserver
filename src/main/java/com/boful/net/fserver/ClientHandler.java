@@ -48,7 +48,6 @@ public class ClientHandler extends IoHandlerAdapter {
             }
             if (operation == Operation.TAG_DOWNLOAD_STATE) {
                 DownloadProtocol downloadProtocol = (DownloadProtocol) message;
-                System.out.println("------------------TAG_DOWNLOAD_STATE----------------------");
             }
         }
     }
