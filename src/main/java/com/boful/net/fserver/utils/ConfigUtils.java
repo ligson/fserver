@@ -15,6 +15,9 @@ public class ConfigUtils {
 		int[] config = new int[3];
 		try {
 			URL url = ClassLoader.getSystemResource("conf/config.properties");
+			if (url == null) {
+				url = ClassLoader.getSystemResource("config.properties");
+			}
 			InputStream in = new BufferedInputStream(new FileInputStream(
 					url.getPath()));
 			Properties props = new Properties();
