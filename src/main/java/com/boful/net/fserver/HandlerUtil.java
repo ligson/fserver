@@ -12,17 +12,19 @@ import org.apache.mina.core.session.IoSession;
 import com.boful.common.file.utils.FileUtils;
 import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
+import com.boful.net.fserver.protocol.SendStateProtocol;
 import com.boful.net.fserver.protocol.TransferProtocol;
 
 public class HandlerUtil {
-	
+
 	private static Logger logger = Logger.getLogger(ServerHandler.class);
-	
-	protected void doDownLoad(IoSession session, DownloadProtocol downloadProtocol){
-		File dest=downloadProtocol.getDest();
-		File src=downloadProtocol.getSrc();
+
+	protected void doDownLoad(IoSession session,
+			DownloadProtocol downloadProtocol) {
+		File dest = downloadProtocol.getDest();
+		File src = downloadProtocol.getSrc();
 		try {
-			if(src.exists()){
+			if (src.exists()) {
 				InputStream inputStream = new FileInputStream(src);
 				int bufferSize = 64 * 1024;
 				byte[] buffer = new byte[bufferSize];
@@ -42,17 +44,20 @@ public class HandlerUtil {
 					offset += bufferSize;
 				}
 				inputStream.close();
-				if(fileHash==FileUtils.getHexHash(dest)){
-					session.setAttribute("TAG_STATE_DOWNLOAD", Operation.TAG_STATE_DOWNLOAD_OK);
+				if (fileHash == FileUtils.getHexHash(dest)) {
+					session.setAttribute("TAG_STATE_DOWNLOAD",
+							Operation.TAG_STATE_DOWNLOAD_OK);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			session.setAttribute("TAG_STATE_DOWNLOAD", Operation.TAG_STATE_DOWNLOAD_ERROR);
+			session.setAttribute("TAG_STATE_DOWNLOAD",
+					Operation.TAG_STATE_DOWNLOAD_ERROR);
 		}
 	}
 
-	protected void doReceive(IoSession session, TransferProtocol transferProtocol) {
+	protected void doReceive(IoSession session,
+			TransferProtocol transferProtocol) {
 		File dest = transferProtocol.getDestFile();
 		double process = transferProtocol.getOffset() * 1.00
 				/ transferProtocol.getFileSize();
@@ -88,13 +93,26 @@ public class HandlerUtil {
 						+ fileHash.equals(srcHash));
 				randomAccessFile.close();
 				session.removeAttribute(writerKey);
-				if(fileHash.equals(srcHash)){
-					session.setAttribute("TAG_STATE_SEND", Operation.TAG_STATE_SEND_OK);
+				// 向客户端发送信息
+				SendStateProtocol sendStateProtocol = new SendStateProtocol();
+				sendStateProtocol.setHash(srcHash);
+				sendStateProtocol.setSrcFile(transferProtocol.getSrcFile());
+				sendStateProtocol.setDestFile(transferProtocol.getDestFile());
+				// 文件hash不一致
+				if (!fileHash.equals(srcHash)) {
+					sendStateProtocol.setState(Operation.TAG_STATE_SEND_ERROR);
 				}
+				session.write(sendStateProtocol);
 			}
 		} catch (IOException e) {
+			logger.info("上传失败！");
 			e.printStackTrace();
-			session.setAttribute("TAG_STATE_SEND", Operation.TAG_STATE_SEND_ERROR);
+			// 向客户端发送信息
+			SendStateProtocol sendStateProtocol = new SendStateProtocol();
+			sendStateProtocol.setSrcFile(transferProtocol.getSrcFile());
+			sendStateProtocol.setDestFile(transferProtocol.getDestFile());
+			sendStateProtocol.setState(Operation.TAG_STATE_SEND_ERROR);
+			session.write(sendStateProtocol);
 		}
 	}
 

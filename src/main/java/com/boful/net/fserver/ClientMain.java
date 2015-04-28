@@ -66,9 +66,6 @@ public class ClientMain {
 		// 连接到服务器：
 		cf = connector.connect(new InetSocketAddress(address, port));
 		cf.awaitUninterruptibly();
-		/*
-		 * try { Thread.sleep(5000); } catch (InterruptedException e) { }
-		 */
 	}
 
 	/***

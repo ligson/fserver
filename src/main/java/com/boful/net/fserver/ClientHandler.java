@@ -1,21 +1,22 @@
 package com.boful.net.fserver;
+
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
-import org.apache.log4j.Logger;
 
 import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
-import com.boful.net.fserver.protocol.TransferProtocol;
+import com.boful.net.fserver.protocol.SendStateProtocol;
 
 public class ClientHandler extends IoHandlerAdapter {
 
 	private Set<IoSession> sessions = new HashSet<IoSession>();
 	private static Logger logger = Logger.getLogger(ClientHandler.class);
-	private HandlerUtil handerUtil=new HandlerUtil();
+
 	@Override
 	public void sessionClosed(IoSession session) throws Exception {
 		super.sessionClosed(session);
@@ -38,17 +39,17 @@ public class ClientHandler extends IoHandlerAdapter {
 		}
 		if (field != null) {
 			int operation = field.getInt(message);
-			if (operation == Operation.TAG_SEND) {
-				TransferProtocol transferProtocol = (TransferProtocol) message;
-				handerUtil.doReceive(session, transferProtocol);
+			if (operation == Operation.TAG_SEND_STATE) {
+				SendStateProtocol sendStateProtocol = (SendStateProtocol) message;
+				System.out.println("-------TAG_SEND_STATE----");
 			}
-			if(operation==Operation.TAG_DOWNLOAD){
-				DownloadProtocol downloadProtocol=(DownloadProtocol) message;
-				handerUtil.doDownLoad(session,downloadProtocol);
+			if (operation == Operation.TAG_DOWNLOAD_STATE) {
+				DownloadProtocol downloadProtocol = (DownloadProtocol) message;
+				System.out.println("-------TAG_DOWNLOAD_STATE----");
+
 			}
 		}
 	}
-	
 
 	@Override
 	public void messageSent(IoSession session, Object message) throws Exception {
@@ -60,7 +61,5 @@ public class ClientHandler extends IoHandlerAdapter {
 			throws Exception {
 		cause.printStackTrace();
 	}
-	
-	
 
 }
