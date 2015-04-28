@@ -1,6 +1,7 @@
 package com.boful.net.fserver.utils;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -18,8 +19,8 @@ public class ConfigUtils {
 			if (url == null) {
 				url = ClassLoader.getSystemResource("config.properties");
 			}
-			InputStream in = new BufferedInputStream(new FileInputStream(
-					url.getPath()));
+			// InputStream in = new BufferedInputStream(new FileInputStream(url.getPath()));
+			InputStream in = new BufferedInputStream(new FileInputStream(new File("src/main/resources/config.properties")));
 			Properties props = new Properties();
 			props.load(in);
 
