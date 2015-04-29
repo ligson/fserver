@@ -63,7 +63,7 @@ public class FServerClient {
         cf = connector.connect(new InetSocketAddress(address, port));
         cf.awaitUninterruptibly();
         try {
-            cf.getSession();
+            ioSession = cf.getSession();
             logger.debug("服务器" + address + ":" + port + "连接成功！");
         } catch (Exception e) {
             logger.debug("服务器" + address + ":" + port + "连接失败！");
@@ -114,7 +114,6 @@ public class FServerClient {
     }
 
     public void download(File serverFile, File nativeFile) throws Exception {
-        IoSession ioSession = cf.getSession();
         if (ioSession != null) {
             DownloadProtocol downloadProtocol = new DownloadProtocol();
             downloadProtocol.setSrc(serverFile);
