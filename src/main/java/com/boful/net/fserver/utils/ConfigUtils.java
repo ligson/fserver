@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import com.boful.cnode.client.CNodeClient;
+import com.boful.net.client.CNodeClient;
 
 public class ConfigUtils {
     private static Logger logger = Logger.getLogger(ConfigUtils.class);

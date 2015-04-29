@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
-import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.SendStateProtocol;
+import com.boful.net.fserver.utils.ConfigUtils;
 
 public class FServerClientHandler extends IoHandlerAdapter {
 
@@ -42,12 +42,12 @@ public class FServerClientHandler extends IoHandlerAdapter {
                 SendStateProtocol sendStateProtocol = (SendStateProtocol) message;
                 if (sendStateProtocol.getState() == Operation.TAG_STATE_SEND_OK) {
                     logger.info("文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输成功！");
+                    // 调用cnode
+                    CNodeClient client = ConfigUtils.getCNodeClient();
+                    // client.send(session.getAttribute("cmd"));
                 } else {
                     logger.info("文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输失败！");
                 }
-            }
-            if (operation == Operation.TAG_DOWNLOAD_STATE) {
-                DownloadProtocol downloadProtocol = (DownloadProtocol) message;
             }
         }
     }

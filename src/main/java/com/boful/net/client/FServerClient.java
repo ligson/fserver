@@ -32,6 +32,7 @@ public class FServerClient {
      * 当前链接
      */
     private ConnectFuture cf;
+    private IoSession ioSession;
 
     private Logger logger = Logger.getLogger(FServerClient.class);
 
@@ -87,7 +88,6 @@ public class FServerClient {
      * @throws Exception
      */
     public void send(File file, String destFile) throws Exception {
-        IoSession ioSession = cf.getSession();
         if (ioSession != null) {
             InputStream inputStream = new FileInputStream(file);
             int bufferSize = 64 * 1024;
@@ -121,5 +121,9 @@ public class FServerClient {
             downloadProtocol.setDest(nativeFile);
             ioSession.write(downloadProtocol);
         }
+    }
+
+    public void setCmd(String cmd) {
+        ioSession.setAttribute("cmd", cmd);
     }
 }
