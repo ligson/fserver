@@ -26,21 +26,21 @@ public class FServer {
     private static Logger logger = Logger.getLogger(FServer.class);
 
     public static void startServer() {
-        int[] config = ConfigUtils.initServerConfig();
-        acceptor.getFilterChain().addLast("logger", new LoggingFilter());
-        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(bofulCodec));
-        acceptor.setHandler(serverHandler);
-
-        acceptor.getSessionConfig().setReadBufferSize(config[0]);
-        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, config[1]);
+        logger.debug("服务器开始启动...........");
         try {
+            int[] config = ConfigUtils.initServerConfig();
+            acceptor.getFilterChain().addLast("logger", new LoggingFilter());
+            acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(bofulCodec));
+            acceptor.setHandler(serverHandler);
+            acceptor.getSessionConfig().setReadBufferSize(config[0]);
+            acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, config[1]);
             acceptor.bind(new InetSocketAddress(config[2]));
         } catch (IOException e) {
             logger.debug("服务器启动失败...........");
             logger.debug("错误信息：" + e.getMessage());
             System.exit(0);
         }
-        logger.debug("starting...........");
+        logger.debug("服务器启动成功...........");
     }
 
     public static void main(String[] args) throws IOException {
