@@ -8,11 +8,15 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import com.boful.cnode.client.CNodeClient;
+
 public class ConfigUtils {
     private static Logger logger = Logger.getLogger(ConfigUtils.class);
+    private static CNodeClient cNodeClient = null;
 
     public static int[] initServerConfig() {
-        int[] config = new int[3];
+        logger.debug("配置文件初始化。。。。。。");
+        int[] config = new int[4];
         try {
             URL url = ClassLoader.getSystemResource("conf/config.properties");
             if (url == null) {
@@ -26,17 +30,32 @@ public class ConfigUtils {
             int bufferSize = Integer.parseInt(props.getProperty("server.bufferSize"));
             int idleTime = Integer.parseInt(props.getProperty("server.idleTime"));
             int port = Integer.parseInt(props.getProperty("server.port"));
+            int cNodePort = Integer.parseInt(props.getProperty("cnode.port"));
 
             config[0] = bufferSize;
             config[1] = idleTime;
             config[2] = port;
-
+            config[3] = cNodePort;
+            logger.debug("配置文件初始化成功！");
             return config;
         } catch (Exception e) {
-            logger.debug("配置文件初始化失败...........");
+            logger.debug("配置文件初始化失败！");
             logger.debug("错误信息：" + e.getMessage());
             return config;
         }
+    }
 
+    public static boolean initCNodeClient(String address, int port) {
+        CNodeClient cNodeClient = new CNodeClient();
+        try {
+            cNodeClient.connect(address, port);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static CNodeClient getCNodeClient() {
+        return cNodeClient;
     }
 }

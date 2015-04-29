@@ -116,10 +116,16 @@
 			<artifactId>boful-common</artifactId>
 			<version>${bofulCommon.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.boful</groupId>
 			<artifactId>bofulnetprotocol</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.boful.convert</groupId>
+			<artifactId>cBalance</artifactId>
 			<version>1.0</version>
 		</dependency>
 
