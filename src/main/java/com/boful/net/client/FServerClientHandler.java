@@ -12,10 +12,10 @@ import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.SendStateProtocol;
 
-public class ClientHandler extends IoHandlerAdapter {
+public class FServerClientHandler extends IoHandlerAdapter {
 
     private Set<IoSession> sessions = new HashSet<IoSession>();
-    private static Logger logger = Logger.getLogger(ClientHandler.class);
+    private static Logger logger = Logger.getLogger(FServerClientHandler.class);
 
     @Override
     public void sessionClosed(IoSession session) throws Exception {

@@ -24,9 +24,9 @@ public class FServerClient {
     /***
      * 客户端业务处理
      * 
-     * @see ClientHandler
+     * @see FServerClientHandler
      */
-    private ClientHandler clientHandler = new ClientHandler();
+    private FServerClientHandler clientHandler = new FServerClientHandler();
 
     /***
      * 当前链接
