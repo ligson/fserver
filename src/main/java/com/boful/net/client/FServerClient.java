@@ -1,10 +1,11 @@
-package com.boful.net.fserver;
+package com.boful.net.client;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 
+import org.apache.log4j.Logger;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.session.IoSession;
@@ -14,17 +15,9 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import com.boful.common.file.utils.FileUtils;
 import com.boful.net.fserver.codec.BofulCodec;
 import com.boful.net.fserver.protocol.DownloadProtocol;
-import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.TransferProtocol;
 
-import org.apache.log4j.Logger;
-
-public class ClientMain {
-    /***
-     * 通用解码器
-     * 
-     * @see BofulCodec
-     */
+public class FServerClient {
     private BofulCodec bofulCodec = new BofulCodec();
     private NioSocketConnector connector = new NioSocketConnector();
 
@@ -40,7 +33,7 @@ public class ClientMain {
      */
     private ConnectFuture cf;
 
-    private Logger logger = Logger.getLogger(ClientMain.class);
+    private Logger logger = Logger.getLogger(FServerClient.class);
 
     /***
      * 链接到服务器
@@ -51,7 +44,8 @@ public class ClientMain {
      *            服务器端口
      */
     public void connect(String address, int port) throws Exception {
-        logger.debug("链接到：" + address + ":" + port);
+        logger.debug("开始连接服务器：" + address + ":" + port);
+
         // 创建接受数据的过滤器
         DefaultIoFilterChainBuilder chain = connector.getFilterChain();
 
@@ -69,9 +63,9 @@ public class ClientMain {
         cf.awaitUninterruptibly();
         try {
             cf.getSession();
-            logger.debug("文件服务器" + address + ":" + port + "连接成功！");
+            logger.debug("服务器" + address + ":" + port + "连接成功！");
         } catch (Exception e) {
-            logger.debug("文件服务器" + address + ":" + port + "连接成功！");
+            logger.debug("服务器" + address + ":" + port + "连接失败！");
             throw e;
         }
     }
@@ -115,7 +109,7 @@ public class ClientMain {
             }
             inputStream.close();
         } else {
-            throw new Exception("未连接上");
+            throw new Exception("服务器连接失败！");
         }
     }
 
@@ -126,24 +120,6 @@ public class ClientMain {
             downloadProtocol.setSrc(serverFile);
             downloadProtocol.setDest(nativeFile);
             ioSession.write(downloadProtocol);
-        }
-    }
-
-    public void operationFile(String serverAddress, Integer serverPort, String serverFilePath, String nativeFilePath,
-            int operation) {
-        File serverFile = new File(serverFilePath);
-        File nativeFile = new File(nativeFilePath);
-        ClientMain clientMain = new ClientMain();
-        // clientMain.connect(serverAddress, serverPort);
-        try {
-            if (operation == Operation.TAG_DOWNLOAD) {
-                clientMain.download(serverFile, nativeFile);
-            } else {
-                clientMain.send(serverFile, nativeFilePath);
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 }

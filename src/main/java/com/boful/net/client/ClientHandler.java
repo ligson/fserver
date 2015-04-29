@@ -1,4 +1,4 @@
-package com.boful.net.fserver;
+package com.boful.net.client;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -61,5 +61,4 @@ public class ClientHandler extends IoHandlerAdapter {
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
         cause.printStackTrace();
     }
-
 }
