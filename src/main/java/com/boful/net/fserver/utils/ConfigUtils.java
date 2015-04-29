@@ -45,10 +45,10 @@ public class ConfigUtils {
         }
     }
 
-    public static boolean initCNodeClient(String address, int port) {
+    public static boolean initCNodeClient(int port) {
         CNodeClient cNodeClient = new CNodeClient();
         try {
-            cNodeClient.connect(address, port);
+            cNodeClient.connect("127.0.0.1", port);
             return true;
         } catch (Exception e) {
             return false;

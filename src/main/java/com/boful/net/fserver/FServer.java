@@ -27,8 +27,8 @@ public class FServer {
 
     public static void startServer() {
         logger.debug("服务器开始启动...........");
+        int[] config = ConfigUtils.initServerConfig();
         try {
-            int[] config = ConfigUtils.initServerConfig();
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
             acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(bofulCodec));
             acceptor.setHandler(serverHandler);
@@ -40,6 +40,13 @@ public class FServer {
             logger.debug("错误信息：" + e.getMessage());
             System.exit(0);
         }
+
+        boolean initClientFlag = ConfigUtils.initCNodeClient(config[3]);
+        if (!initClientFlag) {
+            logger.debug("服务器启动失败...........");
+            return;
+        }
+
         logger.debug("服务器启动成功...........");
     }
 
