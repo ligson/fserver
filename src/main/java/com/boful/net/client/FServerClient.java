@@ -14,6 +14,7 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import com.boful.common.file.utils.FileUtils;
 import com.boful.convert.core.TranscodeEvent;
+import com.boful.net.client.event.TransferEvent;
 import com.boful.net.fserver.codec.BofulCodec;
 import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.TransferProtocol;
@@ -88,14 +89,17 @@ public class FServerClient {
      *            目标文件
      * @throws Exception
      */
-    public void send(File file, String destFile) throws Exception {
+    public void send(File file, String destFile, TransferEvent transferEvent) throws Exception {
         if (ioSession != null) {
+            clientHandler.setTransferEvent(transferEvent);
             InputStream inputStream = new FileInputStream(file);
             int bufferSize = 64 * 1024;
             byte[] buffer = new byte[bufferSize];
             int len = -1;
             long offset = 0;
+            File dest = new File(destFile);
             String fileHash = FileUtils.getHexHash(file);
+            transferEvent.onStart(file, dest);
             while ((len = inputStream.read(buffer)) > 0) {
                 TransferProtocol transferProtocol = new TransferProtocol();
                 transferProtocol.setSrcFile(file);
@@ -107,20 +111,26 @@ public class FServerClient {
                 transferProtocol.setBuffer(buffer);
                 ioSession.write(transferProtocol);
                 offset += bufferSize;
+                
+                int process = (int)(offset*1.00/file.length())*100;
+                transferEvent.onTransfer(file,dest, process);
             }
+            
             inputStream.close();
         } else {
             throw new Exception("服务器连接失败！");
         }
     }
 
-    public void download(File serverFile, File nativeFile) throws Exception {
+    public void download(File serverFile, File nativeFile,TransferEvent transferEvent) throws Exception {
         IoSession ioSession = cf.getSession();
         if (ioSession != null) {
+            clientHandler.setTransferEvent(transferEvent);
             DownloadProtocol downloadProtocol = new DownloadProtocol();
             downloadProtocol.setSrc(serverFile);
             downloadProtocol.setDest(nativeFile);
             ioSession.write(downloadProtocol);
+            transferEvent.onStart(serverFile, nativeFile);
         }
     }
 
@@ -130,7 +140,6 @@ public class FServerClient {
 
     public void setTranscodeEvent(TranscodeEvent event) {
         clientHandler = (FServerClientHandler) connector.getHandler();
-        clientHandler.setTranscodeEvent(event);
     }
 
     private int serverIndex;

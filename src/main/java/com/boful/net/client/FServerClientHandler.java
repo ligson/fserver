@@ -8,16 +8,18 @@ import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
-import com.boful.convert.core.TranscodeEvent;
 import com.boful.convert.model.DiskFile;
+import com.boful.net.client.event.TransferEvent;
+import com.boful.net.fserver.HandlerUtil;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.SendStateProtocol;
+import com.boful.net.fserver.protocol.TransferProtocol;
 
 public class FServerClientHandler extends IoHandlerAdapter {
 
     private Set<IoSession> sessions = new HashSet<IoSession>();
     private static Logger logger = Logger.getLogger(FServerClientHandler.class);
-    private TranscodeEvent transcodeEvent;
+    private TransferEvent transferEvent;
 
     @Override
     public void sessionClosed(IoSession session) throws Exception {
@@ -44,12 +46,22 @@ public class FServerClientHandler extends IoHandlerAdapter {
                 SendStateProtocol sendStateProtocol = (SendStateProtocol) message;
                 // 文件传输成功
                 if (sendStateProtocol.getState() == Operation.TAG_STATE_SEND_OK) {
+                    transferEvent.onSuccess(sendStateProtocol.getSrcFile(), sendStateProtocol.getDestFile());
                     logger.info("文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输成功！");
-                    transcodeEvent.onSubmitSuccess(new DiskFile(sendStateProtocol.getSrcFile()), null);
+                    // transcodeEvent.onSubmitSuccess(new
+                    // DiskFile(sendStateProtocol.getSrcFile()), null);
+
                 } else {
                     logger.info("文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输失败！");
-                    transcodeEvent.onSubmitFail(new DiskFile(sendStateProtocol.getSrcFile()), "文件"
-                            + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输失败！", null);
+                    transferEvent.onFail(sendStateProtocol.getSrcFile(), sendStateProtocol.getDestFile(), "error");
+                }
+            } else if (operation == Operation.TAG_SEND) {
+                TransferProtocol transferProtocol = (TransferProtocol) message;
+                int process = (int) (transferProtocol.getOffset() * 1.00 / transferProtocol.getFileSize()) * 100;
+                transferEvent.onTransfer(transferProtocol.getSrcFile(), transferProtocol.getDestFile(), process);
+                HandlerUtil.doReceive(session, transferProtocol);
+                if (process == 100) {
+                    transferEvent.onSuccess(transferProtocol.getSrcFile(), transferProtocol.getDestFile());
                 }
             }
         }
@@ -65,7 +77,12 @@ public class FServerClientHandler extends IoHandlerAdapter {
         cause.printStackTrace();
     }
 
-    public void setTranscodeEvent(TranscodeEvent event) {
-        this.transcodeEvent = event;
+    public TransferEvent getTransferEvent() {
+        return transferEvent;
     }
+
+    public void setTransferEvent(TransferEvent transferEvent) {
+        this.transferEvent = transferEvent;
+    }
+
 }

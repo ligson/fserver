@@ -19,7 +19,7 @@ public class HandlerUtil {
 
     private static Logger logger = Logger.getLogger(ServerHandler.class);
 
-    protected void doDownLoad(IoSession session, DownloadProtocol downloadProtocol) {
+    public static void doDownLoad(IoSession session, DownloadProtocol downloadProtocol) {
         File dest = downloadProtocol.getDest();
         File src = downloadProtocol.getSrc();
         try {
@@ -53,7 +53,7 @@ public class HandlerUtil {
         }
     }
 
-    protected void doReceive(IoSession session, TransferProtocol transferProtocol) {
+    public static void doReceive(IoSession session, TransferProtocol transferProtocol) {
         File dest = transferProtocol.getDestFile();
         double process = transferProtocol.getOffset() * 1.00 / transferProtocol.getFileSize();
         logger.debug("src:" + transferProtocol.getSrcFile().getAbsolutePath() + "-dest:"
