@@ -23,6 +23,7 @@ public class ConfigUtils {
                 url = ClassLoader.getSystemResource("config.properties");
             }
             InputStream in = new BufferedInputStream(new FileInputStream(url.getPath()));
+            //InputStream in = new BufferedInputStream(new FileInputStream(new File("src/main/resources/config.properties")));
             Properties props = new Properties();
             props.load(in);
 
@@ -30,12 +31,10 @@ public class ConfigUtils {
             int bufferSize = Integer.parseInt(props.getProperty("server.bufferSize"));
             int idleTime = Integer.parseInt(props.getProperty("server.idleTime"));
             int port = Integer.parseInt(props.getProperty("server.port"));
-            int cNodePort = Integer.parseInt(props.getProperty("cnode.port"));
 
             config[0] = bufferSize;
             config[1] = idleTime;
             config[2] = port;
-            config[3] = cNodePort;
             logger.debug("配置文件初始化成功！");
             return config;
         } catch (Exception e) {
@@ -45,17 +44,25 @@ public class ConfigUtils {
         }
     }
 
-    public static boolean initCNodeClient(int port) {
-        CNodeClient cNodeClient = new CNodeClient();
-        try {
-            cNodeClient.connect("127.0.0.1", port);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public static CNodeClient getCNodeClient() {
+        if (cNodeClient == null) {
+            try {
+                URL url = ClassLoader.getSystemResource("conf/config.properties");
+                if (url == null) {
+                    url = ClassLoader.getSystemResource("config.properties");
+                }
+                InputStream in = new BufferedInputStream(new FileInputStream(url.getPath()));
+                //InputStream in = new BufferedInputStream(new FileInputStream(new File("src/main/resources/config.properties")));
+                Properties props = new Properties();
+                props.load(in);
+                String cNodeIp = props.getProperty("cnode.ip");
+                int cNodePort = Integer.parseInt(props.getProperty("cnode.port"));
+                cNodeClient = new CNodeClient();
+                cNodeClient.connect(cNodeIp, cNodePort);
+            } catch (Exception e) {
+                return cNodeClient;
+            }
+        }
         return cNodeClient;
     }
 }

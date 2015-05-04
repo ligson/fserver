@@ -40,9 +40,6 @@ public class FServer {
             logger.debug("错误信息：" + e.getMessage());
             System.exit(0);
         }
-
-        ConfigUtils.initCNodeClient(config[3]);
-
         logger.debug("服务器启动成功...........");
     }
 
