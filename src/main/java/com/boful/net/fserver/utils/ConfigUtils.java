@@ -8,11 +8,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import com.boful.net.client.CNodeClient;
-
 public class ConfigUtils {
     private static Logger logger = Logger.getLogger(ConfigUtils.class);
-    private static CNodeClient cNodeClient = null;
 
     public static int[] initServerConfig() {
         logger.debug("配置文件初始化。。。。。。");
@@ -23,7 +20,8 @@ public class ConfigUtils {
                 url = ClassLoader.getSystemResource("config.properties");
             }
             InputStream in = new BufferedInputStream(new FileInputStream(url.getPath()));
-            //InputStream in = new BufferedInputStream(new FileInputStream(new File("src/main/resources/config.properties")));
+            // InputStream in = new BufferedInputStream(new FileInputStream(new
+            // File("src/main/resources/config.properties")));
             Properties props = new Properties();
             props.load(in);
 
@@ -42,27 +40,5 @@ public class ConfigUtils {
             logger.debug("错误信息：" + e.getMessage());
             return config;
         }
-    }
-
-    public static CNodeClient getCNodeClient() {
-        if (cNodeClient == null) {
-            try {
-                URL url = ClassLoader.getSystemResource("conf/config.properties");
-                if (url == null) {
-                    url = ClassLoader.getSystemResource("config.properties");
-                }
-                InputStream in = new BufferedInputStream(new FileInputStream(url.getPath()));
-                //InputStream in = new BufferedInputStream(new FileInputStream(new File("src/main/resources/config.properties")));
-                Properties props = new Properties();
-                props.load(in);
-                String cNodeIp = props.getProperty("cnode.ip");
-                int cNodePort = Integer.parseInt(props.getProperty("cnode.port"));
-                cNodeClient = new CNodeClient();
-                cNodeClient.connect(cNodeIp, cNodePort);
-            } catch (Exception e) {
-                return cNodeClient;
-            }
-        }
-        return cNodeClient;
     }
 }
