@@ -132,4 +132,14 @@ public class FServerClient {
         clientHandler = (FServerClientHandler) connector.getHandler();
         clientHandler.setTranscodeEvent(event);
     }
+
+    private int serverIndex;
+
+    public void setIndex(int index) {
+        this.serverIndex = index;
+    }
+
+    public int getIndex() {
+        return this.serverIndex;
+    }
 }
