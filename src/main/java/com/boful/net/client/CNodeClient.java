@@ -11,7 +11,6 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import com.boful.cnode.server.codec.BofulCodec;
-import com.boful.convert.core.TranscodeEvent;
 import com.boful.net.cnode.protocol.ConvertTaskProtocol;
 
 public class CNodeClient {
@@ -80,10 +79,5 @@ public class CNodeClient {
         System.out.println("disconnect");
         ioSession.getCloseFuture().awaitUninterruptibly();
         connector.dispose();
-    }
-    
-    public void setTranscodeEvent(TranscodeEvent transcodeEvent) {
-        clientHandler = (NodeClientHandler) connector.getHandler();
-        clientHandler.setTranscodeEvent(transcodeEvent);
     }
 }
