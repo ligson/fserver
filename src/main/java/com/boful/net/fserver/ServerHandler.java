@@ -32,7 +32,6 @@ public class ServerHandler extends IoHandlerAdapter {
 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-        // TODO Auto-generated method stub
         cause.printStackTrace();
     }
 

@@ -65,6 +65,16 @@ public class CNodeClient {
         }
     }
 
+    public void send(String cmd) throws Exception {
+        if (ioSession != null) {
+            ConvertTaskProtocol convertTaskProtocol = new ConvertTaskProtocol();
+            convertTaskProtocol.setCmd(cmd);
+            ioSession.write(convertTaskProtocol);
+        } else {
+            throw new Exception("未连接上");
+        }
+    }
+
     public void disconnect() {
         System.out.println("disconnect");
         ioSession.getCloseFuture().awaitUninterruptibly();

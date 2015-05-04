@@ -39,8 +39,6 @@ public class NodeClientHandler extends IoHandlerAdapter {
             int operation = field.getInt(message);
             if (operation == Operation.TAG_CONVERT_STATE) {
                 ConvertStateProtocol convertStateProtocol = (ConvertStateProtocol) message;
-                String ip = session.getAttribute("rootIp").toString();
-                int port = (int) session.getAttribute("rootPort");
                 logger.info(convertStateProtocol.getMessage());
             }
         }

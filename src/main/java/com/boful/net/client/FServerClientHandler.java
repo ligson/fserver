@@ -41,11 +41,10 @@ public class FServerClientHandler extends IoHandlerAdapter {
             if (operation == Operation.TAG_SEND_STATE) {
                 SendStateProtocol sendStateProtocol = (SendStateProtocol) message;
                 if (sendStateProtocol.getState() == Operation.TAG_STATE_SEND_OK) {
-                    System.out.println("-------------------文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输成功！");
                     logger.info("文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输成功！");
                     // 调用cnode
                     CNodeClient client = ConfigUtils.getCNodeClient();
-                    // client.send(session.getAttribute("cmd"));
+                    client.send(session.getAttribute("cmd").toString());
                 } else {
                     logger.info("文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输失败！");
                 }

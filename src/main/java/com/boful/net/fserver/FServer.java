@@ -41,11 +41,7 @@ public class FServer {
             System.exit(0);
         }
 
-        boolean initClientFlag = ConfigUtils.initCNodeClient(config[3]);
-        if (!initClientFlag) {
-            logger.debug("服务器启动失败...........");
-            return;
-        }
+        ConfigUtils.initCNodeClient(config[3]);
 
         logger.debug("服务器启动成功...........");
     }
