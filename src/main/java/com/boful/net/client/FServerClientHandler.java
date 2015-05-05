@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
-import com.boful.convert.model.DiskFile;
 import com.boful.net.client.event.TransferEvent;
 import com.boful.net.fserver.HandlerUtil;
 import com.boful.net.fserver.protocol.Operation;

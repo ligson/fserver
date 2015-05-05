@@ -15,7 +15,6 @@ import com.boful.net.fserver.protocol.TransferProtocol;
 public class ServerHandler extends IoHandlerAdapter {
     private Set<IoSession> sessions = new HashSet<IoSession>();
     private static Logger logger = Logger.getLogger(ServerHandler.class);
-    private static HandlerUtil handerUtil = new HandlerUtil();
 
     @Override
     public void sessionCreated(IoSession session) throws Exception {
@@ -48,11 +47,11 @@ public class ServerHandler extends IoHandlerAdapter {
             int operation = field.getInt(message);
             if (operation == Operation.TAG_SEND) {
                 TransferProtocol transferProtocol = (TransferProtocol) message;
-                handerUtil.doReceive(session, transferProtocol);
+                HandlerUtil.doReceive(session, transferProtocol);
             }
             if (operation == Operation.TAG_DOWNLOAD) {
                 DownloadProtocol downloadProtocol = (DownloadProtocol) message;
-                handerUtil.doDownLoad(session, downloadProtocol);
+                HandlerUtil.doDownLoad(session, downloadProtocol);
             }
         }
     }
