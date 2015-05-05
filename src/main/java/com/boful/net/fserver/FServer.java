@@ -41,6 +41,7 @@ public class FServer {
             System.exit(0);
         }
         logger.debug("服务器启动成功...........");
+        System.out.println("fserver服务器启动成功...........");
     }
 
     public static void main(String[] args) throws IOException {
