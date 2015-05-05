@@ -54,6 +54,9 @@ public class FServerClientHandler extends IoHandlerAdapter {
             } else if (operation == Operation.TAG_SEND) {
                 TransferProtocol transferProtocol = (TransferProtocol) message;
                 int process = (int) (transferProtocol.getOffset() * 1.00 / transferProtocol.getFileSize()) * 100;
+                if (process >= 100) {
+                    process = 100;
+                }
                 transferEvent.onTransfer(transferProtocol.getSrcFile(), transferProtocol.getDestFile(), process);
                 HandlerUtil.doReceive(session, transferProtocol);
                 if (process == 100) {
