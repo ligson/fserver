@@ -89,7 +89,7 @@ public class HandlerUtil {
                 SendStateProtocol sendStateProtocol = new SendStateProtocol();
                 sendStateProtocol.setHash(srcHash);
                 sendStateProtocol.setSrcFile(transferProtocol.getSrcFile());
-                sendStateProtocol.setDestFile(transferProtocol.getDestFile());
+                sendStateProtocol.setDestFile(dest);
                 // 文件hash不一致
                 if (!fileHash.equals(srcHash)) {
                     sendStateProtocol.setState(Operation.TAG_STATE_SEND_ERROR);
