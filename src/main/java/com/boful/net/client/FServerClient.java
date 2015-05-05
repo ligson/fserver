@@ -111,18 +111,18 @@ public class FServerClient {
                 transferProtocol.setBuffer(buffer);
                 ioSession.write(transferProtocol);
                 offset += bufferSize;
-                
-                int process = (int)(offset*1.00/file.length())*100;
-                transferEvent.onTransfer(file,dest, process);
+
+                int process = (int) (offset * 1.00 / file.length()) * 100;
+                transferEvent.onTransfer(file, dest, process);
             }
-            
+
             inputStream.close();
         } else {
             throw new Exception("服务器连接失败！");
         }
     }
 
-    public void download(File serverFile, File nativeFile,TransferEvent transferEvent) throws Exception {
+    public void download(File serverFile, File nativeFile, TransferEvent transferEvent) throws Exception {
         IoSession ioSession = cf.getSession();
         if (ioSession != null) {
             clientHandler.setTransferEvent(transferEvent);

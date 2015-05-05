@@ -14,6 +14,7 @@ import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.SendStateProtocol;
 import com.boful.net.fserver.protocol.TransferProtocol;
+import com.boful.net.fserver.utils.ConfigUtils;
 
 public class HandlerUtil {
 
@@ -54,7 +55,7 @@ public class HandlerUtil {
     }
 
     public static void doReceive(IoSession session, TransferProtocol transferProtocol) {
-        File dest = transferProtocol.getDestFile();
+        File dest = ConfigUtils.getUploadPath(transferProtocol.getHash(), transferProtocol.getSrcFile().getName());
         double process = transferProtocol.getOffset() * 1.00 / transferProtocol.getFileSize();
         logger.debug("src:" + transferProtocol.getSrcFile().getAbsolutePath() + "-dest:"
                 + transferProtocol.getDestFile().getAbsolutePath() + "-接收进度:" + process * 100 + "%");
