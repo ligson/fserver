@@ -47,9 +47,6 @@ public class FServerClientHandler extends IoHandlerAdapter {
                 if (sendStateProtocol.getState() == Operation.TAG_STATE_SEND_OK) {
                     transferEvent.onSuccess(sendStateProtocol.getSrcFile(), sendStateProtocol.getDestFile());
                     logger.info("文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输成功！");
-                    // transcodeEvent.onSubmitSuccess(new
-                    // DiskFile(sendStateProtocol.getSrcFile()), null);
-
                 } else {
                     logger.info("文件" + sendStateProtocol.getSrcFile().getAbsolutePath() + "传输失败！");
                     transferEvent.onFail(sendStateProtocol.getSrcFile(), sendStateProtocol.getDestFile(), "error");
@@ -67,17 +64,8 @@ public class FServerClientHandler extends IoHandlerAdapter {
     }
 
     @Override
-    public void messageSent(IoSession session, Object message) throws Exception {
-        super.messageSent(session, message);
-    }
-
-    @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
         cause.printStackTrace();
-    }
-
-    public TransferEvent getTransferEvent() {
-        return transferEvent;
     }
 
     public void setTransferEvent(TransferEvent transferEvent) {
