@@ -34,7 +34,7 @@ public class HandlerUtil {
                 while ((len = inputStream.read(buffer)) > 0) {
                     TransferProtocol transferProtocol = new TransferProtocol();
                     transferProtocol.setSrcFile(src);
-                    transferProtocol.setDestFile(dest);
+                    transferProtocol.setDestFile(dest.getAbsolutePath());
                     transferProtocol.setFileSize(src.length());
                     transferProtocol.setLen(len);
                     transferProtocol.setHash(fileHash);
@@ -58,7 +58,7 @@ public class HandlerUtil {
         File dest = ConfigUtils.getUploadPath(transferProtocol.getHash(), transferProtocol.getSrcFile().getName());
         double process = transferProtocol.getOffset() * 1.00 / transferProtocol.getFileSize();
         logger.debug("src:" + transferProtocol.getSrcFile().getAbsolutePath() + "-dest:"
-                + transferProtocol.getDestFile().getAbsolutePath() + "-接收进度:" + process * 100 + "%");
+                + transferProtocol.getDestFile() + "-接收进度:" + process * 100 + "%");
         try {
             if (!dest.exists()) {
                 dest.getParentFile().mkdirs();
@@ -89,7 +89,7 @@ public class HandlerUtil {
                 SendStateProtocol sendStateProtocol = new SendStateProtocol();
                 sendStateProtocol.setHash(srcHash);
                 sendStateProtocol.setSrcFile(transferProtocol.getSrcFile());
-                sendStateProtocol.setDestFile(dest);
+                sendStateProtocol.setDestFile(dest.getAbsolutePath());
                 // 文件hash不一致
                 if (!fileHash.equals(srcHash)) {
                     sendStateProtocol.setState(Operation.TAG_STATE_SEND_ERROR);
