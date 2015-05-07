@@ -127,6 +127,7 @@
 			<groupId>com.boful.convert</groupId>
 			<artifactId>cNode</artifactId>
 			<version>1.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
