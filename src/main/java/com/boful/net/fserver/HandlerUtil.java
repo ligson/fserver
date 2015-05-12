@@ -44,7 +44,7 @@ public class HandlerUtil {
                     offset += bufferSize;
                 }
                 inputStream.close();
-                if (fileHash == FileUtils.getHexHash(dest)) {
+                if (dest.exists() && fileHash == FileUtils.getHexHash(dest)) {
                     session.setAttribute("TAG_STATE_DOWNLOAD", Operation.TAG_STATE_DOWNLOAD_OK);
                 }
             }

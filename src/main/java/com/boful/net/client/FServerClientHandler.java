@@ -10,6 +10,7 @@ import org.apache.mina.core.session.IoSession;
 
 import com.boful.net.client.event.TransferEvent;
 import com.boful.net.fserver.HandlerUtil;
+import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.SendStateProtocol;
 import com.boful.net.fserver.protocol.TransferProtocol;
@@ -62,6 +63,9 @@ public class FServerClientHandler extends IoHandlerAdapter {
                 if (process == 100) {
                     transferEvent.onSuccess(transferProtocol.getSrcFile(), transferProtocol.getDestFile());
                 }
+            } else if (operation == Operation.TAG_DOWNLOAD) {
+                DownloadProtocol downloadProtocol = (DownloadProtocol) message;
+                HandlerUtil.doDownLoad(session, downloadProtocol);
             }
         }
     }
