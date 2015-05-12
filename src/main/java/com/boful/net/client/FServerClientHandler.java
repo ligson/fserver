@@ -1,5 +1,8 @@
 package com.boful.net.client;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +13,6 @@ import org.apache.mina.core.session.IoSession;
 
 import com.boful.net.client.event.TransferEvent;
 import com.boful.net.fserver.HandlerUtil;
-import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.SendStateProtocol;
 import com.boful.net.fserver.protocol.TransferProtocol;
@@ -33,10 +35,10 @@ public class FServerClientHandler extends IoHandlerAdapter {
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
-        super.messageReceived(session, message);
         Field field = null;
         try {
             field = message.getClass().getDeclaredField("OPERATION");
+            field.setAccessible(true);
         } catch (NoSuchFieldException exception) {
             logger.debug(exception);
         }
@@ -63,9 +65,12 @@ public class FServerClientHandler extends IoHandlerAdapter {
                 if (process == 100) {
                     transferEvent.onSuccess(transferProtocol.getSrcFile(), transferProtocol.getDestFile());
                 }
-            } else if (operation == Operation.TAG_DOWNLOAD) {
-                DownloadProtocol downloadProtocol = (DownloadProtocol) message;
-                HandlerUtil.doDownLoad(session, downloadProtocol);
+            } else if (operation == Operation.TAG_SEND_DOWNLOAD) {
+                TransferProtocol transferProtocol = (TransferProtocol) message;
+                File dest = new File(transferProtocol.getDestFile());
+                OutputStream output = new FileOutputStream(dest, true);
+                output.write(transferProtocol.getBuffer());
+                output.close();
             }
         }
     }

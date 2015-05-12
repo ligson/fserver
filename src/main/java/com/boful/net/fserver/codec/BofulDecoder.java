@@ -41,6 +41,16 @@ public class BofulDecoder extends CumulativeProtocolDecoder {
                     return true;
                 }
             }
+            if (operation == Operation.TAG_SEND_DOWNLOAD) {
+                TransferProtocol transferProtocol = TransferProtocol.parseDownload(inBuffer);
+                if (transferProtocol == null) {
+                    inBuffer.reset();
+                    return false;
+                } else {
+                    out.write(transferProtocol);
+                    return true;
+                }
+            }
             if (operation == Operation.TAG_SEND_STATE) {
                 SendStateProtocol sendStateProtocol = SendStateProtocol.parse(inBuffer);
                 if (sendStateProtocol == null) {

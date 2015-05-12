@@ -33,6 +33,7 @@ public class HandlerUtil {
                 String fileHash = FileUtils.getHexHash(src);
                 while ((len = inputStream.read(buffer)) > 0) {
                     TransferProtocol transferProtocol = new TransferProtocol();
+                    transferProtocol.OPERATION = Operation.TAG_SEND_DOWNLOAD;
                     transferProtocol.setSrcFile(src);
                     transferProtocol.setDestFile(dest.getAbsolutePath());
                     transferProtocol.setFileSize(src.length());
