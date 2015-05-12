@@ -20,9 +20,9 @@ public class HandlerUtil {
 
     private static Logger logger = Logger.getLogger(ServerHandler.class);
 
-    public static void doDownLoad(IoSession session, DownloadProtocol protocol) {
-        File dest = new File(protocol.getDestFile());
-        File src = protocol.getSrcFile();
+    public static void doDownLoad(IoSession session, DownloadProtocol downloadProtocol) {
+        File dest = new File(downloadProtocol.getDest());
+        File src = downloadProtocol.getSrc();
         try {
             if (src.exists()) {
                 InputStream inputStream = new FileInputStream(src);
@@ -32,18 +32,21 @@ public class HandlerUtil {
                 long offset = 0;
                 String fileHash = FileUtils.getHexHash(src);
                 while ((len = inputStream.read(buffer)) > 0) {
-                    DownloadProtocol downloadProtocol = new DownloadProtocol();
-                    downloadProtocol.setSrcFile(src);
-                    downloadProtocol.setDestFile(dest.getAbsolutePath());
-                    downloadProtocol.setFileSize(src.length());
-                    downloadProtocol.setLen(len);
-                    downloadProtocol.setHash(fileHash);
-                    downloadProtocol.setOffset(offset);
-                    downloadProtocol.setBuffer(buffer);
-                    session.write(downloadProtocol);
+                    TransferProtocol transferProtocol = new TransferProtocol();
+                    transferProtocol.setSrcFile(src);
+                    transferProtocol.setDestFile(dest.getAbsolutePath());
+                    transferProtocol.setFileSize(src.length());
+                    transferProtocol.setLen(len);
+                    transferProtocol.setHash(fileHash);
+                    transferProtocol.setOffset(offset);
+                    transferProtocol.setBuffer(buffer);
+                    session.write(transferProtocol);
                     offset += bufferSize;
                 }
                 inputStream.close();
+                if (fileHash == FileUtils.getHexHash(dest)) {
+                    session.setAttribute("TAG_STATE_DOWNLOAD", Operation.TAG_STATE_DOWNLOAD_OK);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
