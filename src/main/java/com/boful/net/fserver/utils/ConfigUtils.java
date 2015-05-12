@@ -24,9 +24,8 @@ public class ConfigUtils {
             if (url == null) {
                 url = ClassLoader.getSystemResource("config.properties");
             }
-            InputStream in = new BufferedInputStream(new FileInputStream(url.getPath()));
-            // InputStream in = new BufferedInputStream(new FileInputStream(new
-            // File("src/main/resources/config.properties")));
+            //InputStream in = new BufferedInputStream(new FileInputStream(url.getPath()));
+            InputStream in = new BufferedInputStream(new FileInputStream(new File("src/main/resources/config.properties")));
             Properties props = new Properties();
             props.load(in);
 

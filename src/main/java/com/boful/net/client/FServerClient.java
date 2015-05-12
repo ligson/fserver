@@ -126,8 +126,8 @@ public class FServerClient {
         if (ioSession != null) {
             clientHandler.setTransferEvent(transferEvent);
             DownloadProtocol downloadProtocol = new DownloadProtocol();
-            downloadProtocol.setSrc(serverFile);
-            downloadProtocol.setDest(nativeFile);
+            downloadProtocol.setSrcFile(serverFile);
+            downloadProtocol.setDestFile(nativeFile);
             ioSession.write(downloadProtocol);
             transferEvent.onStart(serverFile, nativeFile);
         }
