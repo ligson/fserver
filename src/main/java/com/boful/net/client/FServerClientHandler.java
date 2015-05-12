@@ -1,8 +1,5 @@
 package com.boful.net.client;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,9 +8,9 @@ import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
-import com.boful.common.file.utils.FileUtils;
 import com.boful.net.client.event.TransferEvent;
 import com.boful.net.fserver.HandlerUtil;
+import com.boful.net.fserver.protocol.DownloadProtocol;
 import com.boful.net.fserver.protocol.Operation;
 import com.boful.net.fserver.protocol.SendStateProtocol;
 import com.boful.net.fserver.protocol.TransferProtocol;
@@ -67,15 +64,8 @@ public class FServerClientHandler extends IoHandlerAdapter {
                     transferEvent.onSuccess(transferProtocol.getSrcFile(), transferProtocol.getDestFile());
                 }
             } else if (operation == Operation.TAG_DOWNLOAD) {
-                TransferProtocol transferProtocol = (TransferProtocol) message;
-                File dest = new File(transferProtocol.getDestFile());
-                OutputStream outputStream = new FileOutputStream(dest, true);
-                outputStream.write(transferProtocol.getBuffer());
-                outputStream.close();
-
-                if (transferProtocol.getHash() == FileUtils.getHexHash(dest)) {
-                    System.out.println("下载完成！");
-                }
+                DownloadProtocol downloadProtocol = (DownloadProtocol) message;
+                HandlerUtil.doDownLoad(session, downloadProtocol);
             }
         }
     }
