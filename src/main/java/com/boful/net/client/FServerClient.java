@@ -121,7 +121,7 @@ public class FServerClient {
         }
     }
 
-    public void download(File serverFile, File nativeFile, TransferEvent transferEvent) throws Exception {
+    public void download(File serverFile, String nativeFile, TransferEvent transferEvent) throws Exception {
         IoSession ioSession = cf.getSession();
         if (ioSession != null) {
             clientHandler.setTransferEvent(transferEvent);
@@ -129,7 +129,7 @@ public class FServerClient {
             downloadProtocol.setSrc(serverFile);
             downloadProtocol.setDest(nativeFile);
             ioSession.write(downloadProtocol);
-            transferEvent.onStart(serverFile, nativeFile.getAbsolutePath());
+            transferEvent.onStart(serverFile, nativeFile);
         }
     }
 

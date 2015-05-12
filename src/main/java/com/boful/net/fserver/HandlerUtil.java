@@ -21,7 +21,7 @@ public class HandlerUtil {
     private static Logger logger = Logger.getLogger(ServerHandler.class);
 
     public static void doDownLoad(IoSession session, DownloadProtocol downloadProtocol) {
-        File dest = downloadProtocol.getDest();
+        File dest = new File(downloadProtocol.getDest());
         File src = downloadProtocol.getSrc();
         try {
             if (src.exists()) {
