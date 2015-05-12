@@ -2,8 +2,10 @@ package com.boful.net.fserver;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
 import org.apache.log4j.Logger;
@@ -26,12 +28,14 @@ public class HandlerUtil {
         try {
             if (src.exists()) {
                 InputStream inputStream = new FileInputStream(src);
+                OutputStream outputStream = new FileOutputStream(dest, true);
                 int bufferSize = 64 * 1024;
                 byte[] buffer = new byte[bufferSize];
                 int len = -1;
                 long offset = 0;
                 String fileHash = FileUtils.getHexHash(src);
                 while ((len = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer);
                     TransferProtocol transferProtocol = new TransferProtocol();
                     transferProtocol.setSrcFile(src);
                     transferProtocol.setDestFile(dest.getAbsolutePath());
@@ -44,7 +48,8 @@ public class HandlerUtil {
                     offset += bufferSize;
                 }
                 inputStream.close();
-                if (dest.exists() && fileHash == FileUtils.getHexHash(dest)) {
+                outputStream.close();
+                if (fileHash == FileUtils.getHexHash(dest)) {
                     session.setAttribute("TAG_STATE_DOWNLOAD", Operation.TAG_STATE_DOWNLOAD_OK);
                 }
             }
